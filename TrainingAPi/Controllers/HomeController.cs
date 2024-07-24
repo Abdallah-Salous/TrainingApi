@@ -1,4 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Runtime.CompilerServices;
+using TrainingApiDAL.Models;
+using TrainingApiDAL.Repositories;
 
 namespace TrainingAPi.Controllers
 {
@@ -6,18 +10,30 @@ namespace TrainingAPi.Controllers
     [Route("[controller]")]
     public class HomeController : Controller
     {
+        private readonly IAppUserRepositry _respository;
+        private readonly IPostsRepository _postRespository;
+
+        public HomeController(IAppUserRepositry respository, IPostsRepository postRespository)
+        {
+           _respository = respository;
+            _postRespository = postRespository;
+        }
 
         [HttpGet]
-        public IActionResult GetUserName()
+        public async Task<IActionResult> GetUserName()
         {
-            return new OkObjectResult("Abdallah");
+            var result = await _respository.GetAllUsersAsync();
+
+            return Ok(result);
         }
 
 
         [HttpGet("GetUser")]
-        public IActionResult GetUser()
+        public async Task<IActionResult> GetUser(long id)
         {
-            return new OkObjectResult("Abdallah");
+            var result = await _respository.GetUserWithPosts(id);
+
+            return Ok(result);
         }
 
 
