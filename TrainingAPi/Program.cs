@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using TrainingAPi.Extesnions2;
 using TrainingApiDAL.Models;
 using TrainingApiDAL.Repositories;
 
@@ -15,6 +16,7 @@ builder.Services.AddDbContext<TrainingTestDbContext>(options =>
 
 builder.Services.AddScoped<IAppUserRepositry, AppUserRepository>();
 builder.Services.AddScoped<IPostsRepository, PostsRepository>();
+builder.Services.AddJwtBearer(builder.Configuration);
 // Add services to the container.
 
 builder.Services.AddControllers();
