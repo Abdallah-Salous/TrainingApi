@@ -1,7 +1,11 @@
+using FluentValidation;
+using Mapster;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using TrainingAPi.Extesnions2;
+using TrainingAPi.Shared;
+using TrainingAPi.Validators;
 using TrainingApiDAL.Models;
 using TrainingApiDAL.Repositories;
 
@@ -17,6 +21,8 @@ builder.Services.AddDbContext<TrainingTestDbContext>(options =>
 builder.Services.AddScoped<IAppUserRepositry, AppUserRepository>();
 builder.Services.AddScoped<IPostsRepository, PostsRepository>();
 builder.Services.AddJwtBearer(builder.Configuration);
+builder.Services.AddSwagger(builder.Configuration);
+builder.Services.AddMapster();
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -24,21 +30,23 @@ builder.Services.AddControllers();
 //{
 //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
 //});
+
+builder.Services.AddValidatorsFromAssemblyContaining<AppUserValidtor>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerExt();
 }
 
 app.UseHttpsRedirection();
-
+app.UseMiddleware<RequestMiddleware>();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

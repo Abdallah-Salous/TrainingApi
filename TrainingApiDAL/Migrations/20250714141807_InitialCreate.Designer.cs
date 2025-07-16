@@ -12,7 +12,7 @@ using TrainingApiDAL.Models;
 namespace TrainingApiDAL.Migrations
 {
     [DbContext(typeof(TrainingTestDbContext))]
-    [Migration("20240723074524_InitialCreate")]
+    [Migration("20250714141807_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -81,8 +81,6 @@ namespace TrainingApiDAL.Migrations
 
                     b.HasIndex("PostId");
 
-                    b.HasIndex("UserId");
-
                     b.ToTable("Comment");
                 });
 
@@ -123,14 +121,7 @@ namespace TrainingApiDAL.Migrations
                         .HasForeignKey("PostId")
                         .HasConstraintName("FK_Comment_Post");
 
-                    b.HasOne("TrainingApiDAL.Models.AppUser", "User")
-                        .WithMany("Comments")
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("FK_Comment_AppUser");
-
                     b.Navigation("Post");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TrainingApiDAL.Models.Post", b =>
@@ -145,8 +136,6 @@ namespace TrainingApiDAL.Migrations
 
             modelBuilder.Entity("TrainingApiDAL.Models.AppUser", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Posts");
                 });
 

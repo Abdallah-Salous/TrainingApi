@@ -63,11 +63,6 @@ namespace TrainingApiDAL.Migrations
                 {
                     table.PrimaryKey("PK_Comment", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comment_AppUser",
-                        column: x => x.UserId,
-                        principalTable: "AppUser",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Comment_Post",
                         column: x => x.PostId,
                         principalTable: "Post",
@@ -78,11 +73,6 @@ namespace TrainingApiDAL.Migrations
                 name: "IX_Comment_PostId",
                 table: "Comment",
                 column: "PostId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Comment_UserId",
-                table: "Comment",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Post_UserId",

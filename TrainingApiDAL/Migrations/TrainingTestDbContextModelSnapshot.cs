@@ -38,11 +38,6 @@ namespace TrainingApiDAL.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<string>("FamilyName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -82,8 +77,6 @@ namespace TrainingApiDAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PostId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Comment");
                 });
@@ -125,14 +118,7 @@ namespace TrainingApiDAL.Migrations
                         .HasForeignKey("PostId")
                         .HasConstraintName("FK_Comment_Post");
 
-                    b.HasOne("TrainingApiDAL.Models.AppUser", "User")
-                        .WithMany("Comments")
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("FK_Comment_AppUser");
-
                     b.Navigation("Post");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TrainingApiDAL.Models.Post", b =>
@@ -147,8 +133,6 @@ namespace TrainingApiDAL.Migrations
 
             modelBuilder.Entity("TrainingApiDAL.Models.AppUser", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Posts");
                 });
 
