@@ -2,6 +2,7 @@ using FluentValidation;
 using Mapster;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 using System.Text.Json.Serialization;
 using TrainingAPi.Extesnions2;
 using TrainingAPi.Shared;
@@ -10,6 +11,9 @@ using TrainingApiDAL.Models;
 using TrainingApiDAL.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddSerilog();
+
 var connectionString = builder.Configuration.GetConnectionString("TrainingConnectionString");
 //var connec = builder.Configuration["ConnectionStrings:TrainingConnectionString"];
 
@@ -22,6 +26,15 @@ builder.Services.AddScoped<IAppUserRepositry, AppUserRepository>();
 builder.Services.AddScoped<IPostsRepository, PostsRepository>();
 builder.Services.AddJwtBearer(builder.Configuration);
 builder.Services.AddSwagger(builder.Configuration);
+builder.Services.AddCors(option =>
+{
+    option.AddPolicy("CorsPolicy", policy =>
+    {
+        policy.AllowAnyOrigin();
+    });
+});
+
+
 builder.Services.AddMapster();
 // Add services to the container.
 
@@ -45,10 +58,33 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseMiddleware<SerilogEnricherMiddleware>();
+
 app.UseMiddleware<RequestMiddleware>();
+
+app.UseCors("CorsPolicy");
+
 app.UseAuthentication();
 app.UseAuthorization();
 
+
+
 app.MapControllers();
 
-app.Run();
+Log.Logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext().CreateLogger();
+
+try
+{
+    Log.Information("Starting Up");
+    app.Run();
+}
+catch(Exception ex)
+{
+    Log.Fatal(ex, "Application failed to start");
+}
+finally
+{
+    Log.CloseAndFlush();
+}

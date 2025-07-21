@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
+﻿
 namespace TrainingAPi.Shared
 {
     public class RequestMiddleware
@@ -22,19 +21,24 @@ namespace TrainingAPi.Shared
             }
             catch (TrainingValidationException ve)
             {
-                _logger.LogError(ve.Message);
-                var response = new ObjectResult("Invalid operation") { StatusCode = 400 };
-                var actionContext = new ActionContext() { HttpContext = context };
+                _logger.LogError(ve ,ve.Message);
 
-                await response.ExecuteResultAsync(actionContext).ConfigureAwait(false);
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsJsonAsync(new { message = "Invalid operation" });
+            }
+            catch (TrainingBadRequestException be)
+            {
+                _logger.LogError(be, be.Message);
+
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsJsonAsync($"{be.Message}");
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex.StackTrace);
-                var response = new ObjectResult("Internal server error") { StatusCode = 500 };
-                var actionContext = new ActionContext() { HttpContext = context };
+                _logger.LogCritical(ex, ex.StackTrace);
 
-                await response.ExecuteResultAsync(actionContext).ConfigureAwait(false);
+                context.Response.StatusCode = 500;
+                await context.Response.WriteAsJsonAsync(new { message = "Internal server error" });
             }
 
         }

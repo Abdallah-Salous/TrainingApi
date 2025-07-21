@@ -10,7 +10,7 @@ namespace TrainingAPi.ViewModel2
         public int Expires_in { get; set; }
     }
 
-    public class Oath2LoginViewModel
+    public class LoginViewModel
     {
         [Required]
         public string UserName { get; set; }

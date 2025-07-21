@@ -47,7 +47,7 @@ namespace TrainingApiDAL.Repositories
 
         public async Task<AppUser> GetUserByName(string userName)
         {
-            var user = await _trainingTestDbContext.AppUsers.Where(user => string.Equals(user.FirstName, userName)).
+            var user = await _trainingTestDbContext.AppUsers.Where(user => string.Equals(user.Email, userName)).
                 FirstOrDefaultAsync();
             if (user == null) throw new ArgumentNullException("User");
             return user;
